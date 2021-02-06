@@ -29,6 +29,17 @@ spec:
     # which strategy to use (blueGreen, canary..)
     canary:
     # this part represents all the steps during an update.
+      # add an analysis to validate the changes
+      analysis:
+        templates:
+        # name of AnalysisTemplate
+        - templateName: success-rate
+        # When it begins (after the 1-minute pause)
+        startingStep: 2
+        args:
+        - name: service-name
+          # name of the canary service (used in prometheus to find the correct metrics)
+          value: demo-canary.default
       steps:
     # we send at the beginning of the new release 20% of the traffic to the canary release.
     # To do that, Argo CD will update the weight of Istio's VirtualService.
@@ -51,3 +62,27 @@ spec:
             name: istio-vs
             routes:
             - primary 
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate
+  namespace: defaultc
+spec:
+  args:
+  - name: service-name
+  metrics:
+  - name: success-rate
+    successCondition: result[0] >= 0.95
+    interval: 30s
+    failureLimit: 1
+    provider:
+      prometheus:
+        address: http://prometheus.istio-system:9090
+        query: |
+          sum(irate(
+            istio_requests_total{reporter="source",destination_service=~"{{args.service-name}}",response_code!~"5.*"}[1m]
+          )) / 
+          sum(irate(
+            istio_requests_total{reporter="source",destination_service=~"{{args.service-name}}"}[1m]
+          ))
