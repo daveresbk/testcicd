@@ -67,7 +67,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
   name: success-rate
-  namespace: defaultc
+  namespace: default
 spec:
   args:
   - name: service-name
