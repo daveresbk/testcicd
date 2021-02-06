@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: demo
+  namespace: default
+  labels:
+    app: demo
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+      - name: demo
+        # https://github.com/argoproj/rollouts-demo
+        # Available images colors are: red, orange, yellow, green, blue, purple (e.g. argoproj/rollouts-demo:yellow). Also available are:
+        # High error rate images, prefixed with the word bad (e.g. argoproj/rollouts-demo:bad-yellow)
+        # High latency images, prefixed with the word slow (e.g. argoproj/rollouts-demo:slow-yellow)
+        image: argoproj/rollouts-demo:blue
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+  strategy:
+    # which strategy to use (blueGreen, canary..)
+    canary:
+    # this part represents all the steps during an update.
+      steps:
+    # we send at the beginning of the new release 20% of the traffic to the canary release.
+    # To do that, Argo CD will update the weight of Istio's VirtualService.
+      - setWeight: 20
+    # Then we wait 1min to generate some traffic on the canary release.
+      - pause:
+          duration: "1m"
+    # After 1 min, we send 50% of the traffic to the canary release.
+      - setWeight: 50
+    # Then we wait again 2min
+      - pause:
+          duration: "2m"
+    # At the end if no more step is present, 
+    # Argo will send 100% of the traffic to the canary release.
+      stableService: demo # represents our main clusterIP service.
+      canaryService: demo-canary # represents our canary clusterIP service.
+      trafficRouting:
+        istio:
+           virtualService: 
+            name: istio-vs
+            routes:
+            - primary 
