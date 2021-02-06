@@ -21,7 +21,7 @@ spec:
         # Available images colors are: red, orange, yellow, green, blue, purple (e.g. argoproj/rollouts-demo:yellow). Also available are:
         # High error rate images, prefixed with the word bad (e.g. argoproj/rollouts-demo:bad-yellow)
         # High latency images, prefixed with the word slow (e.g. argoproj/rollouts-demo:slow-yellow)
-        image: argoproj/rollouts-demo:bad-red
+        image: argoproj/rollouts-demo:green
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
