@@ -10,7 +10,7 @@ spec:
   - host: demo.info
     http:
       paths:
-      - path: /
+      - path: /*
         backend:
           serviceName: argodemo-svc
           servicePort: 80
