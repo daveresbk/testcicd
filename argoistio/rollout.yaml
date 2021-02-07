@@ -1,19 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: demo
+  name: argoistio-rollout
   namespace: default
   labels:
-    app: demo
+    app: demoistio
 spec:
   replicas: 4
   selector:
     matchLabels:
-      app: argoistio-rollout
+      app: demoistio
   template:
     metadata:
       labels:
-        app: demo
+        app: demoistio
     spec:
       containers:
       - name: demo
