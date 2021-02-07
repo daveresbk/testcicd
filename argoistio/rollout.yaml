@@ -9,7 +9,7 @@ spec:
   replicas: 4
   selector:
     matchLabels:
-      app: demo
+      app: argoistio-rollout
   template:
     metadata:
       labels:
