@@ -9,11 +9,11 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: demo
+      app: argodemo
   template:
     metadata:
       labels:
-        app: demo
+        app: argodemo
     spec:
       containers:
       - name: demo
