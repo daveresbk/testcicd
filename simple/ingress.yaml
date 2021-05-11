@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: demo-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: istio
+spec:
+  rules:
+  - host: demo.info
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: argodemo-svc
+          servicePort: 80
